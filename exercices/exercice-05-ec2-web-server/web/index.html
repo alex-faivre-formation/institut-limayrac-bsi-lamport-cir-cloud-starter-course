@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EC2 Instance Metadata</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="text-gray-100 min-h-screen">
+    <nav class="bg-gray-900/80 backdrop-blur sticky top-0 z-50 border-b border-blue-500/20">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">EC2</div>
+                <span class="font-bold text-lg">Instance Metadata</span>
+            </div>
+            <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full">● Live</span>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <div class="float inline-block mb-4">
+                <div class="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.5 1.5H3a1.5 1.5 0 00-1.5 1.5v12a1.5 1.5 0 001.5 1.5h14a1.5 1.5 0 001.5-1.5V8M10.5 1.5a1.5 1.5 0 011.5 1.5v5h5"/>
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold mb-2">Métadonnées Instance EC2</h1>
+            <p class="text-gray-300">Informations récupérées via IMDSv2</p>
+        </div>
+
+        <div id="metadata-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"></div>
+
+        <div class="space-y-6">
+            <div class="bg-gray-800/50 backdrop-blur border border-blue-500/20 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4 text-blue-400">À propos d'IMDSv2</h2>
+                <ul class="space-y-2 text-gray-300 text-sm">
+                    <li>✓ Token-based authentication (sécurité renforcée)</li>
+                    <li>✓ Protection contre les attaques SSRF</li>
+                    <li>✓ Credentials IAM disponibles</li>
+                    <li>✓ Métadonnées complètes de l'instance</li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-800/50 backdrop-blur border border-blue-500/20 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4 text-blue-400">Endpoints Utiles</h2>
+                <div class="bg-gray-900/50 rounded p-3 font-mono text-sm text-green-400 space-y-1 mb-3">
+                    <div>/latest/meta-data/instance-id</div>
+                    <div>/latest/meta-data/instance-type</div>
+                    <div>/latest/meta-data/placement/availability-zone</div>
+                    <div>/latest/meta-data/public-ipv4</div>
+                    <div>/latest/meta-data/iam/security-credentials/</div>
+                </div>
+                <p class="text-xs text-gray-400">Accédez à http://169.254.169.254 depuis l'instance</p>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-500 text-sm mt-12 pt-6 border-t border-gray-700">
+            <p>Généré automatiquement via User Data - Exercice 05 Formation AWS</p>
+            <p id="update-time" class="mt-2 text-gray-600"></p>
+        </footer>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

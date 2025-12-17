@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page non trouvée - AWS Basics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'aws-orange': '#FF9900',
+                        'aws-dark': '#232F3E',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center">
+    <div class="text-center px-4">
+        <div class="mb-8">
+            <div class="text-9xl font-bold bg-gradient-to-r from-aws-orange to-yellow-500 bg-clip-text text-transparent">
+                404
+            </div>
+        </div>
+        
+        <h1 class="text-4xl font-bold mb-4">Page non trouvée</h1>
+        
+        <p class="text-xl text-gray-400 mb-8 max-w-md mx-auto">
+            Oups ! La ressource que vous recherchez n'existe pas dans ce bucket S3.
+        </p>
+        
+        <div class="bg-gray-800 rounded-2xl p-6 max-w-md mx-auto mb-8 text-left">
+            <h2 class="font-semibold mb-3 text-aws-orange">💡 Conseil AWS :</h2>
+            <p class="text-gray-400 text-sm">
+                Cette page s'affiche car l'objet demandé n'existe pas dans le bucket. 
+                Vérifiez que le chemin du fichier est correct et que l'objet a bien été uploadé.
+            </p>
+        </div>
+        
+        <a href="index.html" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-aws-orange to-yellow-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Retour à l'accueil
+        </a>
+        
+        <div class="mt-12 text-gray-500 text-sm">
+            <p>Erreur HTTP 404 - Object Not Found</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Découverte AWS - Les Services Fondamentaux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'aws-orange': '#FF9900',
+                        'aws-dark': '#232F3E',
+                        'aws-light': '#EAEDED',
+                        'aws-blue': '#1A73E8',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-aws-orange to-yellow-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-aws-orange to-yellow-500 bg-clip-text text-transparent">AWS Basics</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#intro" class="text-gray-600 dark:text-gray-300 hover:text-aws-orange transition-colors">Introduction</a>
+                    <a href="#compute" class="text-gray-600 dark:text-gray-300 hover:text-aws-orange transition-colors">Compute</a>
+                    <a href="#storage" class="text-gray-600 dark:text-gray-300 hover:text-aws-orange transition-colors">Stockage</a>
+                    <a href="#network" class="text-gray-600 dark:text-gray-300 hover:text-aws-orange transition-colors">Réseau</a>
+                    <a href="#database" class="text-gray-600 dark:text-gray-300 hover:text-aws-orange transition-colors">Base de données</a>
+                </div>
+                
+                <button id="theme-toggle" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                    </svg>
+                    <svg class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 px-4 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-aws-orange/10 via-transparent to-blue-500/10"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-aws-orange/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-aws-orange/10 text-aws-orange text-sm font-medium mb-6">
+                    <span class="w-2 h-2 bg-aws-orange rounded-full mr-2 animate-pulse"></span>
+                    Formation Cloud Computing
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6">
+                    <span class="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent">Découvrez</span>
+                    <br>
+                    <span class="bg-gradient-to-r from-aws-orange via-yellow-500 to-aws-orange bg-clip-text text-transparent">Amazon Web Services</span>
+                </h1>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+                    Maîtrisez les fondamentaux du cloud computing avec AWS. Des serveurs virtuels au stockage, 
+                    en passant par les bases de données et le réseau.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#intro" class="px-8 py-4 bg-gradient-to-r from-aws-orange to-yellow-500 text-white font-semibold rounded-xl shadow-lg shadow-aws-orange/25 hover:shadow-aws-orange/40 hover:scale-105 transition-all">
+                        Commencer l'apprentissage
+                    </a>
+                    <a href="#services" class="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-aws-orange dark:hover:border-aws-orange transition-all">
+                        Explorer les services
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-aws-orange">200+</div>
+                    <div class="text-gray-600 dark:text-gray-400">Services AWS</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-aws-orange">32</div>
+                    <div class="text-gray-600 dark:text-gray-400">Régions mondiales</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-aws-orange">1M+</div>
+                    <div class="text-gray-600 dark:text-gray-400">Clients actifs</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-aws-orange">Free</div>
+                    <div class="text-gray-600 dark:text-gray-400">Tier disponible</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section id="intro" class="py-20 px-4 bg-white dark:bg-gray-800/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Qu'est-ce qu'AWS ?</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    Amazon Web Services est la plateforme cloud la plus complète et largement adoptée au monde.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Paiement à l'utilisation</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Payez uniquement pour les ressources que vous consommez, sans engagement long terme.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Scalabilité instantanée</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Augmentez ou réduisez vos ressources en quelques clics selon vos besoins.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Présence mondiale</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Déployez vos applications au plus près de vos utilisateurs dans le monde entier.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-aws-dark via-gray-800 to-gray-900 rounded-3xl p-8 text-white shadow-2xl border border-white/10">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <svg class="w-8 h-8 text-aws-orange" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <h3 class="text-3xl font-bold bg-gradient-to-r from-aws-orange to-yellow-400 bg-clip-text text-transparent">Les Modèles Cloud</h3>
+                    </div>
+                    
+                    <!-- Stack Grid -->
+                    <div class="grid grid-cols-1 gap-4 mb-8">
+                        <!-- IaaS -->
+                        <div class="group relative bg-gradient-to-r from-orange-600/20 to-orange-500/10 rounded-2xl p-5 border border-orange-500/30 hover:border-orange-500 transition-all hover:scale-[1.02]">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-aws-orange to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/50">
+                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <h4 class="text-xl font-bold text-white">IaaS</h4>
+                                        <span class="px-2 py-0.5 bg-orange-500/30 text-orange-300 text-xs rounded-full">Infrastructure</span>
+                                    </div>
+                                    <p class="text-gray-300 text-sm mb-2">Infrastructure as a Service</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">EC2</span>
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">VPC</span>
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">EBS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- PaaS -->
+                        <div class="group relative bg-gradient-to-r from-yellow-600/20 to-yellow-500/10 rounded-2xl p-5 border border-yellow-500/30 hover:border-yellow-500 transition-all hover:scale-[1.02]">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/50">
+                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <h4 class="text-xl font-bold text-white">PaaS</h4>
+                                        <span class="px-2 py-0.5 bg-yellow-500/30 text-yellow-300 text-xs rounded-full">Platform</span>
+                                    </div>
+                                    <p class="text-gray-300 text-sm mb-2">Platform as a Service</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">Elastic Beanstalk</span>
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">RDS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SaaS -->
+                        <div class="group relative bg-gradient-to-r from-green-600/20 to-green-500/10 rounded-2xl p-5 border border-green-500/30 hover:border-green-500 transition-all hover:scale-[1.02]">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/50">
+                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <h4 class="text-xl font-bold text-white">SaaS</h4>
+                                        <span class="px-2 py-0.5 bg-green-500/30 text-green-300 text-xs rounded-full">Software</span>
+                                    </div>
+                                    <p class="text-gray-300 text-sm mb-2">Software as a Service</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">WorkSpaces</span>
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">Chime</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- FaaS -->
+                        <div class="group relative bg-gradient-to-r from-blue-600/20 to-blue-500/10 rounded-2xl p-5 border border-blue-500/30 hover:border-blue-500 transition-all hover:scale-[1.02]">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
+                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <h4 class="text-xl font-bold text-white">FaaS</h4>
+                                        <span class="px-2 py-0.5 bg-blue-500/30 text-blue-300 text-xs rounded-full">Function</span>
+                                    </div>
+                                    <p class="text-gray-300 text-sm mb-2">Function as a Service</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">Lambda</span>
+                                        <span class="px-3 py-1 bg-white/10 text-white text-xs rounded-full">Serverless</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Free Tier Banner -->
+                    <div class="relative overflow-hidden bg-gradient-to-r from-aws-orange via-yellow-500 to-orange-600 rounded-2xl p-6 shadow-xl">
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                        <div class="relative flex items-center space-x-4">
+                            <div class="flex-shrink-0 w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                                <svg class="w-8 h-8 text-aws-orange" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-xl font-bold text-white mb-1">AWS Free Tier</h4>
+                                <p class="text-white/90 text-sm leading-relaxed">12 mois d'accès gratuit à de nombreux services pour apprendre et expérimenter sans frais ! Idéal pour débuter votre parcours cloud.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compute Section -->
+    <section id="compute" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4 mb-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold">Compute</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Puissance de calcul à la demande</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- EC2 Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 hover:border-aws-orange dark:hover:border-aws-orange transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-aws-orange to-yellow-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="15" y="15" width="50" height="50" rx="4" opacity="0.3"/>
+                            <rect x="20" y="25" width="15" height="30" fill="currentColor"/>
+                            <rect x="45" y="25" width="15" height="30" fill="currentColor"/>
+                            <rect x="20" y="20" width="40" height="3" fill="currentColor"/>
+                            <rect x="20" y="57" width="40" height="3" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Amazon EC2</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Serveurs virtuels redimensionnables dans le cloud. Choisissez parmi des centaines de types d'instances.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full">Free Tier</span>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm rounded-full">750h/mois</span>
+                    </div>
+                </div>
+
+                <!-- Lambda Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 hover:border-aws-orange dark:hover:border-aws-orange transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <path d="M25 15 L40 15 L55 35 L65 35 L40 65 L45 45 L30 45 L25 15Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">AWS Lambda</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Exécutez du code sans provisionner de serveurs. Paiement uniquement à l'exécution.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full">Free Tier</span>
+                        <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-sm rounded-full">1M requêtes/mois</span>
+                    </div>
+                </div>
+
+                <!-- Elastic Beanstalk Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 hover:border-aws-orange dark:hover:border-aws-orange transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <circle cx="40" cy="25" r="8" fill="currentColor"/>
+                            <circle cx="25" cy="45" r="8" opacity="0.7"/>
+                            <circle cx="55" cy="45" r="8" opacity="0.7"/>
+                            <circle cx="40" cy="60" r="8" opacity="0.5"/>
+                            <line x1="40" y1="33" x2="40" y2="52" stroke="currentColor" stroke-width="2"/>
+                            <line x1="35" y1="30" x2="28" y2="40" stroke="currentColor" stroke-width="2"/>
+                            <line x1="45" y1="30" x2="52" y2="40" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Elastic Beanstalk</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Déployez et gérez des applications web sans vous soucier de l'infrastructure.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full">PaaS</span>
+                        <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-sm rounded-full">Auto-scaling</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Storage Section -->
+    <section id="storage" class="py-20 px-4 bg-white dark:bg-gray-800/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4 mb-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold">Stockage</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Solutions de stockage durables et évolutives</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- S3 Card -->
+                <div class="group bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800 hover:border-green-500 transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <path d="M20 25 L30 20 L50 20 L60 25 L60 55 L50 60 L30 60 L20 55 Z" fill="currentColor" opacity="0.3"/>
+                            <rect x="25" y="30" width="30" height="8" rx="2" fill="currentColor"/>
+                            <rect x="25" y="42" width="30" height="8" rx="2" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Amazon S3</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Stockage objet hautement scalable. Idéal pour les backups, sites statiques, et data lakes.
+                    </p>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+                        <h4 class="font-semibold mb-2">Classes de stockage :</h4>
+                        <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <li>• <strong>Standard</strong> - Accès fréquent</li>
+                            <li>• <strong>Infrequent Access</strong> - Accès occasionnel</li>
+                            <li>• <strong>Glacier</strong> - Archivage long terme</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full">Free Tier</span>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm rounded-full">5 Go</span>
+                    </div>
+                </div>
+
+                <!-- EBS Card -->
+                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="20" y="25" width="40" height="30" rx="3" fill="currentColor" opacity="0.3"/>
+                            <circle cx="30" cy="40" r="4" fill="currentColor"/>
+                            <circle cx="50" cy="40" r="4" fill="currentColor"/>
+                            <rect x="38" y="35" width="4" height="10" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Amazon EBS</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Volumes de stockage bloc persistants pour vos instances EC2. Haute performance.
+                    </p>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+                        <h4 class="font-semibold mb-2">Types de volumes :</h4>
+                        <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <li>• <strong>gp3</strong> - Usage général SSD</li>
+                            <li>• <strong>io2</strong> - IOPS provisionnés</li>
+                            <li>• <strong>st1</strong> - HDD optimisé débit</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full">Free Tier</span>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm rounded-full">30 Go</span>
+                    </div>
+                </div>
+
+                <!-- EFS Card -->
+                <div class="group bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 border border-purple-200 dark:border-purple-800 hover:border-purple-500 transition-all hover:-translate-y-1">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="15" y="20" width="50" height="10" rx="2" fill="currentColor" opacity="0.3"/>
+                            <rect x="15" y="35" width="50" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+                            <rect x="15" y="50" width="50" height="10" rx="2" fill="currentColor"/>
+                            <circle cx="25" cy="25" r="2" fill="white"/>
+                            <circle cx="25" cy="40" r="2" fill="white"/>
+                            <circle cx="25" cy="55" r="2" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Amazon EFS</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Système de fichiers élastique et partagé. Accessible depuis plusieurs instances EC2.
+                    </p>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4">
+                        <h4 class="font-semibold mb-2">Avantages :</h4>
+                        <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <li>• Scalabilité automatique</li>
+                            <li>• Multi-AZ par défaut</li>
+                            <li>• Compatible POSIX</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-sm rounded-full">NFS</span>
+                        <span class="px-3 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 text-sm rounded-full">Élastique</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Network Section -->
+    <section id="network" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4 mb-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold">Réseau</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Infrastructure réseau cloud isolée et sécurisée</p>
+                </div>
+            </div>
+            
+            <!-- VPC Diagram -->
+            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl p-8 mb-12 border-2 border-blue-200 dark:border-blue-700 shadow-xl">
+                <h3 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Architecture VPC Multi-AZ</h3>
+                
+                <!-- Modern VPC Diagram -->
+                <div class="relative">
+                    <!-- AWS Cloud Container -->
+                    <div class="bg-gradient-to-br from-orange-100 to-yellow-100 dark:from-orange-900/20 dark:to-yellow-900/20 rounded-2xl p-6 border-2 border-orange-300 dark:border-orange-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-10 h-10 text-orange-600" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                                <span class="text-lg font-bold text-orange-800 dark:text-orange-300">AWS Cloud</span>
+                            </div>
+                            <span class="px-3 py-1 bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200 rounded-full text-sm font-semibold">us-east-1</span>
+                        </div>
+                        
+                        <!-- VPC Container -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border-2 border-blue-400 dark:border-blue-600 shadow-lg">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-blue-900 dark:text-blue-300">VPC</span>
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">10.0.0.0/16</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                    </svg>
+                                    <span class="text-sm font-semibold text-blue-700 dark:text-blue-300">Internet Gateway</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Availability Zones Grid -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <!-- AZ-A -->
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 border-2 border-purple-300 dark:border-purple-700">
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                        </svg>
+                                        <span class="font-bold text-purple-900 dark:text-purple-300">Availability Zone A</span>
+                                    </div>
+                                    
+                                    <!-- Public Subnet -->
+                                    <div class="bg-green-100 dark:bg-green-900/30 rounded-lg p-4 mb-3 border-2 border-green-400 dark:border-green-600">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-bold text-green-900 dark:text-green-300">Public Subnet</span>
+                                            <span class="text-xs font-mono text-green-700 dark:text-green-400">10.0.1.0/24</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded p-2">
+                                            <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <rect x="3" y="3" width="18" height="18" rx="2" opacity="0.3"/>
+                                                <rect x="6" y="8" width="4" height="8" fill="currentColor"/>
+                                                <rect x="14" y="8" width="4" height="8" fill="currentColor"/>
+                                            </svg>
+                                            <span class="text-sm font-semibold">EC2 Instance</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Private Subnet -->
+                                    <div class="bg-red-100 dark:bg-red-900/30 rounded-lg p-4 border-2 border-red-400 dark:border-red-600">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-bold text-red-900 dark:text-red-300">Private Subnet</span>
+                                            <span class="text-xs font-mono text-red-700 dark:text-red-400">10.0.10.0/24</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded p-2">
+                                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" opacity="0.3"/>
+                                                <circle cx="6" cy="7" r="1.5" fill="currentColor"/>
+                                                <circle cx="6" cy="12" r="1.5" fill="currentColor"/>
+                                                <circle cx="6" cy="17" r="1.5" fill="currentColor"/>
+                                            </svg>
+                                            <span class="text-sm font-semibold">RDS Database</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- AZ-B -->
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 border-2 border-purple-300 dark:border-purple-700">
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                        </svg>
+                                        <span class="font-bold text-purple-900 dark:text-purple-300">Availability Zone B</span>
+                                    </div>
+                                    
+                                    <!-- Public Subnet -->
+                                    <div class="bg-green-100 dark:bg-green-900/30 rounded-lg p-4 mb-3 border-2 border-green-400 dark:border-green-600">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-bold text-green-900 dark:text-green-300">Public Subnet</span>
+                                            <span class="text-xs font-mono text-green-700 dark:text-green-400">10.0.2.0/24</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded p-2">
+                                            <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <rect x="3" y="3" width="18" height="18" rx="2" opacity="0.3"/>
+                                                <rect x="6" y="8" width="4" height="8" fill="currentColor"/>
+                                                <rect x="14" y="8" width="4" height="8" fill="currentColor"/>
+                                            </svg>
+                                            <span class="text-sm font-semibold">EC2 Instance</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Private Subnet -->
+                                    <div class="bg-red-100 dark:bg-red-900/30 rounded-lg p-4 border-2 border-red-400 dark:border-red-600">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-bold text-red-900 dark:text-red-300">Private Subnet</span>
+                                            <span class="text-xs font-mono text-red-700 dark:text-red-400">10.0.20.0/24</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded p-2">
+                                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" opacity="0.3"/>
+                                                <circle cx="6" cy="7" r="1.5" fill="currentColor"/>
+                                                <circle cx="6" cy="12" r="1.5" fill="currentColor"/>
+                                                <circle cx="6" cy="17" r="1.5" fill="currentColor"/>
+                                            </svg>
+                                            <span class="text-sm font-semibold">RDS Database</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Traffic Flow Indicators -->
+                            <div class="mt-6 flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span>Public Access</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span>Private Network</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                    </svg>
+                                    <span>High Availability</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 3h18v18H3V3zm2 2v14h14V5H5z" opacity="0.3"/>
+                            <rect x="7" y="7" width="10" height="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-bold mb-2">VPC</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Réseau virtuel privé isolé dans le cloud AWS</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-green-600" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="4" y="8" width="7" height="8" rx="1" opacity="0.6"/>
+                            <rect x="13" y="8" width="7" height="8" rx="1" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-bold mb-2">Subnets</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Segments réseau publics ou privés dans votre VPC</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="8" stroke-width="2"/>
+                            <path d="M12 4v16M4 12h16" stroke-width="2"/>
+                            <path d="M8 6a8 8 0 0 0 8 12M8 18a8 8 0 0 1 8-12" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-bold mb-2">Internet Gateway</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Passerelle permettant l'accès Internet</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4zm0 2.2l6 3v5.3c0 4.5-3.1 8.8-6 9.9-2.9-1.1-6-5.4-6-9.9V7.2l6-3z" opacity="0.3"/>
+                            <path d="M12 8v8m-3-4l3 3 3-3" stroke="white" stroke-width="1.5" fill="none"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-bold mb-2">Security Groups</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Pare-feu virtuel au niveau instance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Database Section -->
+    <section id="database" class="py-20 px-4 bg-white dark:bg-gray-800/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4 mb-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold">Bases de données</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Solutions managées SQL et NoSQL</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- RDS Card -->
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-white">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-9 h-9" viewBox="0 0 80 80" fill="currentColor">
+                                <ellipse cx="40" cy="25" rx="20" ry="8" opacity="0.3"/>
+                                <ellipse cx="40" cy="40" rx="20" ry="8" opacity="0.5"/>
+                                <ellipse cx="40" cy="55" rx="20" ry="8" fill="white"/>
+                                <path d="M20 25 L20 55 M60 25 L60 55" stroke="white" stroke-width="2" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Amazon RDS</h3>
+                            <p class="text-white/80">Bases de données relationnelles managées</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <h4 class="font-semibold mb-2">Moteurs supportés :</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-white/20 rounded-full text-sm">MySQL</span>
+                                <span class="px-3 py-1 bg-white/20 rounded-full text-sm">PostgreSQL</span>
+                                <span class="px-3 py-1 bg-white/20 rounded-full text-sm">MariaDB</span>
+                                <span class="px-3 py-1 bg-white/20 rounded-full text-sm">Oracle</span>
+                                <span class="px-3 py-1 bg-white/20 rounded-full text-sm">SQL Server</span>
+                            </div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <h4 class="font-semibold mb-2">Free Tier :</h4>
+                            <p class="text-white/80 text-sm">750 heures/mois db.t2.micro ou db.t3.micro pendant 12 mois</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DynamoDB Card -->
+                <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-3xl p-8 text-white">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-9 h-9" viewBox="0 0 80 80" fill="currentColor">
+                                <rect x="15" y="20" width="50" height="12" rx="2" fill="white" opacity="0.3"/>
+                                <rect x="15" y="36" width="50" height="12" rx="2" fill="white" opacity="0.5"/>
+                                <rect x="15" y="52" width="50" height="12" rx="2" fill="white"/>
+                                <circle cx="22" cy="26" r="2.5" fill="#FF9900"/>
+                                <circle cx="22" cy="42" r="2.5" fill="#FF9900"/>
+                                <circle cx="22" cy="58" r="2.5" fill="#FF9900"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Amazon DynamoDB</h3>
+                            <p class="text-white/80">Base de données NoSQL serverless</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <h4 class="font-semibold mb-2">Caractéristiques :</h4>
+                            <ul class="space-y-1 text-sm text-white/80">
+                                <li>✓ Latence milliseconde à n'importe quelle échelle</li>
+                                <li>✓ Fully managed, serverless</li>
+                                <li>✓ Réplication multi-région</li>
+                                <li>✓ Transactions ACID</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <h4 class="font-semibold mb-2">Free Tier :</h4>
+                            <p class="text-white/80 text-sm">25 Go de stockage + 25 unités de capacité en lecture/écriture</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">🎯 Testez vos connaissances</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400">Validez votre compréhension des services AWS</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Question 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold mb-4">1. Quel service AWS utilisez-vous pour héberger un site web statique ?</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q1" value="a" class="w-4 h-4 text-aws-orange">
+                            <span>Amazon EC2</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q1" value="b" class="w-4 h-4 text-aws-orange">
+                            <span>Amazon S3</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q1" value="c" class="w-4 h-4 text-aws-orange">
+                            <span>Amazon RDS</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold mb-4">2. Quelle est la différence principale entre un subnet public et privé ?</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q2" value="a" class="w-4 h-4 text-aws-orange">
+                            <span>La taille du CIDR block</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q2" value="b" class="w-4 h-4 text-aws-orange">
+                            <span>La route vers l'Internet Gateway</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q2" value="c" class="w-4 h-4 text-aws-orange">
+                            <span>Le type d'instances autorisées</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold mb-4">3. Quel service permet d'exécuter du code sans gérer de serveurs ?</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q3" value="a" class="w-4 h-4 text-aws-orange">
+                            <span>AWS Lambda</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q3" value="b" class="w-4 h-4 text-aws-orange">
+                            <span>Amazon EC2</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="radio" name="q3" value="c" class="w-4 h-4 text-aws-orange">
+                            <span>Amazon ECS</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button onclick="checkAnswers()" class="px-8 py-4 bg-gradient-to-r from-aws-orange to-yellow-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+                    Vérifier mes réponses
+                </button>
+            </div>
+            
+            <div id="quiz-result" class="hidden mt-8 p-6 rounded-2xl text-center"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-aws-orange to-yellow-500 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold">AWS Basics</span>
+                    </div>
+                    <p class="text-gray-400">Formation aux fondamentaux du cloud computing avec Amazon Web Services.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Services</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#compute" class="hover:text-aws-orange transition-colors">Compute</a></li>
+                        <li><a href="#storage" class="hover:text-aws-orange transition-colors">Stockage</a></li>
+                        <li><a href="#network" class="hover:text-aws-orange transition-colors">Réseau</a></li>
+                        <li><a href="#database" class="hover:text-aws-orange transition-colors">Base de données</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Ressources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://aws.amazon.com/free/" target="_blank" class="hover:text-aws-orange transition-colors">AWS Free Tier</a></li>
+                        <li><a href="https://docs.aws.amazon.com/" target="_blank" class="hover:text-aws-orange transition-colors">Documentation</a></li>
+                        <li><a href="https://aws.amazon.com/training/" target="_blank" class="hover:text-aws-orange transition-colors">AWS Training</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact</h4>
+                    <p class="text-gray-400">Institut Limayrac<br>Cloud Computing Course</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>© 2024 AWS Basics Course. Hébergé sur Amazon S3.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
