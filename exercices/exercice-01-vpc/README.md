@@ -14,6 +14,8 @@
 - Un compte AWS (Free Tier suffit)
 - Accès à la console AWS
 - Connaissances de base en réseau (IP, CIDR, routage)
+- Accéder à ce lien pour le TP accompagné : https://formation.afaivre.fr/aws-network?source=copy_link
+
 
 ## 🏗️ Architecture cible
 
